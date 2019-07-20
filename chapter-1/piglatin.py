@@ -1,21 +1,34 @@
 import string
 
 
-VOWELS = 'aeiouAEIOU'
-
-
-def maintain_capitalisation(old, new):
-    if old[-1] in string.uppercase:
-        return new.upper()
-    elif old[0] in string.uppercase:
-        return new.capitalize()
-    return new
-
-
 def convert_word(word):
-    first_character = word[0]
-    if first_character in VOWELS:
-        latin = word + 'way'
-    else:
-        latin = word[1:] + first_character + 'ay'
-    return maintain_capitalisation(word, latin)
+    cls = LeadingVowel if word[0] in 'aeiouAEIOU' else LeadingConsonant
+    return cls(word).convert()
+
+
+class Word:
+
+    def __init__(self, english):
+        self.english = english
+
+    def maintain_case(self, latin):
+        if self.english[-1] in string.uppercase:
+            return latin.upper()
+        elif self.english[0] in string.uppercase:
+            return latin.capitalize()
+        return latin
+
+    def convert(self):
+        return self.maintain_case(self.to_latin())
+
+
+class LeadingVowel(Word):
+
+    def to_latin(self):
+        return self.english + 'way'
+
+
+class LeadingConsonant(Word):
+
+    def to_latin(self):
+        return self.english[1:] + self.english[0] + 'ay'
